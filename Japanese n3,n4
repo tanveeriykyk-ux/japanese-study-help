@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Japanese N5–N3 Practice</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f6f7fb;color:#20242b}
+header{background:#151922;color:white;padding:22px 16px;text-align:center}header h1{margin:0 0 6px;font-size:26px}
+nav{display:flex;gap:7px;overflow:auto;padding:10px;background:white;position:sticky;top:0;z-index:5;border-bottom:1px solid #ddd}
+nav button,.level button,.actions button{border:0;border-radius:10px;padding:10px 14px;background:#e9ecf2;cursor:pointer}
+nav button.active,.level button.active{background:#222;color:#fff}
+main{max-width:900px;margin:auto;padding:18px}
+.card{background:white;border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 2px 12px #0000000c}
+h2{margin-top:0}.muted{color:#68707d}.jp{font-size:25px;line-height:1.7}.reading{font-size:18px;margin-top:8px}
+.level{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kanji{font-size:48px;font-weight:700}.meaning{font-weight:600}.example{margin-top:8px}
+.quiz-option{display:block;width:100%;text-align:left;margin:8px 0;background:#f0f2f6;border:0;padding:13px;border-radius:10px;font-size:16px}
+.correct{background:#d9f5df!important}.wrong{background:#ffdcdc!important}
+.progress{height:10px;background:#e5e7eb;border-radius:10px;overflow:hidden}.bar{height:100%;width:0;background:#222}
+footer{text-align:center;color:#777;padding:30px}
+input{padding:11px;border:1px solid #ccd1d9;border-radius:9px;width:100%;font-size:16px}
+.small{font-size:14px}
+</style>
+</head>
+<body>
+<header><h1>日本語 N5 → N3 Practice</h1><div>Kanji • Reading • Grammar • Sentences</div></header>
+<nav id="nav"></nav>
+<main id="app"></main>
+<footer>Japanese Practice • N5–N3 • Progress is saved on this device</footer>
+<script>
+const data={
+N5:{
+kanji:[
+["日","day / sun","日本","にほん","Japan"],["月","month / moon","月曜日","げつようび","Monday"],["火","fire","火曜日","かようび","Tuesday"],
+["水","water","水を飲みます","みずをのみます","I drink water"],["木","tree","木があります","きがあります","There is a tree"],
+["金","gold / money","お金があります","おかねがあります","I have money"],["土","earth","土曜日","どようび","Saturday"],
+["人","person","日本人","にほんじん","Japanese person"],["大","big","大学","だいがく","university"],["小","small","小さい","ちいさい","small"],
+["学","study","学生","がくせい","student"],["生","life / birth","先生","せんせい","teacher"],["先","before","先生","せんせい","teacher"],
+["年","year","今年","ことし","this year"],["時","time","時間","じかん","time"],["間","interval","時間","じかん","time"],
+["今","now","今","いま","now"],["何","what","何ですか","なんですか","What is it?"],["名","name","名前","なまえ","name"],["本","book","本を読む","ほんをよむ","read a book"]
+],
+sentences:[
+["私は大学生です。","わたしは だいがくせいです。","I am a university student.","です / は"],
+["毎朝、六時に起きます。","まいあさ、ろくじに おきます。","I get up at six every morning.","に / time"],
+["図書館で本を読みます。","としょかんで ほんを よみます。","I read books at the library.","で / place"],
+["日本語を勉強しています。","にほんごを べんきょうしています。","I am studying Japanese.","～ています"],
+["これは私のかばんです。","これは わたしの かばんです。","This is my bag.","の / possession"],
+["昨日、映画を見ました。","きのう、えいがを みました。","I watched a movie yesterday.","past tense"],
+["駅まで歩きます。","えきまで あるきます。","I walk as far as the station.","まで"],
+["りんごを三つ買いました。","りんごを みっつ かいました。","I bought three apples.","counters"]
+],
+grammar:[
+["は","topic marker","私は学生です。","I am a student."],["を","object marker","本を読みます。","I read a book."],["で","place of action","学校で勉強します。","I study at school."],["に","time/destination","七時に起きます。","I wake up at seven."],["から","from / because","九時から勉強します。","I study from nine."],["けど","but","行きたいけど、時間がありません。","I want to go, but I don't have time."]
+]
+},
+N4:{
+kanji:[
+["会","meet","会社","かいしゃ","company"],["同","same","同じ","おなじ","same"],["自","self","自分","じぶん","oneself"],
+["家","house / family","家族","かぞく","family"],["族","family","家族","かぞく","family"],["仕","serve","仕事","しごと","work"],
+["事","thing","大事","だいじ","important"],["思","think","思います","おもいます","think"],["知","know","知っています","しっています","know"],
+["持","hold","持っている","もっている","have / hold"],["使","use","使います","つかいます","use"],["作","make","作ります","つくります","make"],
+["住","live","東京に住む","とうきょうにすむ","live in Tokyo"],["近","near","近い","ちかい","near"],["遠","far","遠い","とおい","far"],
+["新","new","新しい","あたらしい","new"],["古","old","古い","ふるい","old"],["多","many","多い","おおい","many"],
+["少","few","少ない","すくない","few"],["強","strong","強い","つよい","strong"]
+],
+sentences:[
+["日本へ行ったことがあります。","にほんへ いったことが あります。","I have been to Japan.","～たことがある"],
+["宿題をしなければなりません。","しゅくだいを しなければ なりません。","I have to do my homework.","～なければならない"],
+["この本はあの本より難しいです。","このほんは あのほんより むずかしいです。","This book is more difficult than that one.","より"],
+["雨が降ったら、家にいます。","あめが ふったら、いえに います。","If it rains, I will stay home.","～たら"],
+["日本語が話せるようになりました。","にほんごが はなせるように なりました。","I became able to speak Japanese.","～ようになる"],
+["電車に乗りながら、本を読みました。","でんしゃに のりながら、ほんを よみました。","I read a book while riding the train.","～ながら"]
+],
+grammar:[
+["～たことがある","have experienced","日本へ行ったことがあります。","I have been to Japan."],["～なければならない","must","勉強しなければなりません。","I must study."],["～てもいい","may / allowed","ここに座ってもいいです。","You may sit here."],["～てはいけない","must not","ここで写真を撮ってはいけません。","You must not take photos here."],["～ながら","while","音楽を聞きながら勉強します。","I study while listening to music."],["～そう","seems / looks","雨が降りそうです。","It looks like it will rain."]
+]
+},
+N3:{
+kanji:[
+["政","politics","政治","せいじ","politics"],["経","manage / pass","経験","けいけん","experience"],["験","test","経験","けいけん","experience"],
+["済","finish / settle","経済","けいざい","economy"],["経","pass / manage","経済","けいざい","economy"],["済","settle","済みました","すみました","finished"],
+["際","occasion","国際","こくさい","international"],["現","present / appear","現在","げんざい","present"],["在","exist","現在","げんざい","present"],
+["関","connection","関係","かんけい","relationship"],["係","relation","関係","かんけい","relationship"],["調","investigate / tune","調べる","しらべる","investigate"],
+["査","investigate","調査","ちょうさ","investigation"],["増","increase","増える","ふえる","increase"],["減","decrease","減る","へる","decrease"],
+["選","choose","選ぶ","えらぶ","choose"],["議","discussion","会議","かいぎ","meeting"],["論","argument","議論","ぎろん","discussion"],
+["確","certain","確認","かくにん","confirmation"],["認","recognize","確認","かくにん","confirmation"],
+["解","solve / understand","理解","りかい","understanding"],["理","reason","理由","りゆう","reason"],["由","reason","理由","りゆう","reason"],
+["必","certainly","必要","ひつよう","necessary"],["要","need","必要","ひつよう","necessary"]
+],
+sentences:[
+["日本で働くために、日本語を勉強しています。","にほんで はたらくために、にほんごを べんきょうしています。","I am studying Japanese in order to work in Japan.","～ために"],
+["先生が来るまで、ここで待っていてください。","せんせいが くるまで、ここで まっていてください。","Please wait here until the teacher comes.","～まで"],
+["忙しいにもかかわらず、彼は手伝ってくれました。","いそがしいにも かかわらず、かれは てつだってくれました。","Despite being busy, he helped me.","～にもかかわらず"],
+["この問題について、みんなで話し合いました。","このもんだいについて、みんなで はなしあいました。","We discussed this issue together.","～について"],
+["健康のために、毎日運動するようにしています。","けんこうの ために、まいにち うんどうするようにしています。","For my health, I try to exercise every day.","～ようにする"],
+["天気予報によると、明日は雨だそうです。","てんきよほうに よると、あしたは あめだそうです。","According to the weather forecast, it will rain tomorrow.","～によると / ～そうだ"],
+["日本語を勉強すればするほど、面白くなります。","にほんごを べんきょうすれば するほど、おもしろくなります。","The more I study Japanese, the more interesting it becomes.","～ば～ほど"],
+["彼は約束を忘れたわけではありません。","かれは やくそくを わすれた わけではありません。","It is not that he forgot the promise.","～わけではない"]
+],
+grammar:[
+["～ために","in order to / for","日本で働くために勉強します。","I study in order to work in Japan."],["～について","about / concerning","日本文化について話します。","I will talk about Japanese culture."],["～によると","according to","ニュースによると、明日は雨です。","According to the news, it will rain tomorrow."],["～ようにする","make an effort to","毎日読むようにしています。","I make an effort to read every day."],["～ば～ほど","the more...the more","読めば読むほど面白いです。","The more I read, the more interesting it is."],["～わけではない","it does not mean that","嫌いなわけではありません。","It doesn't mean I dislike it."],["～にもかかわらず","despite","雨にもかかわらず出かけました。","Despite the rain, I went out."],["～ことになっている","it is decided / scheduled","来週テストをすることになっています。","A test is scheduled for next week."]
+]
+}
+};
+
+let level="N5", tab="home", kanjiIndex=0, sentIndex=0, score=Number(localStorage.jpScore||0);
+const app=document.getElementById("app"), nav=document.getElementById("nav");
+const tabs=[["home","Home"],["kanji","Kanji"],["reading","Reading"],["grammar","Grammar"],["quiz","Quiz"]];
+function renderNav(){nav.innerHTML=tabs.map(x=>`<button class="${tab==x[0]?'active':''}" onclick="tab='${x[0]}';render()">${x[1]}</button>`).join("")}
+function levels(){return `<div class="level">${Object.keys(data).map(l=>`<button class="${level==l?'active':''}" onclick="level='${l}';kanjiIndex=0;sentIndex=0;render()">${l}</button>`).join("")}</div>`}
+function render(){
+renderNav();
+let d=data[level];
+if(tab=="home") app.innerHTML=`${levels()}<div class="card"><h2>Japanese ${level} Practice</h2><p>Build your skills through kanji, example sentences, grammar, and quick quizzes.</p><div class="grid"><div class="card"><b>${d.kanji.length}</b><br>Kanji</div><div class="card"><b>${d.sentences.length}</b><br>Reading sentences</div><div class="card"><b>${d.grammar.length}</b><br>Grammar points</div></div><h3>Progress</h3><div class="progress"><div class="bar" style="width:${Math.min(score*5,100)}%"></div></div><p class="muted">Quiz correct answers: ${score}</p></div>`;
+if(tab=="kanji") app.innerHTML=`${levels()}<div class="grid">${d.kanji.map(k=>`<div class="card"><div class="kanji">${k[0]}</div><div class="meaning">${k[1]}</div><div><b>${k[2]}</b> — ${k[3]}</div><div class="small muted">${k[4]}</div></div>`).join("")}</div>`;
+if(tab=="reading"){let s=d.sentences[sentIndex%d.sentences.length];app.innerHTML=`${levels()}<div class="card"><h2>Reading Practice</h2><div class="jp">${s[0]}</div><button onclick="document.getElementById('reading').hidden=!document.getElementById('reading').hidden">Show reading</button><p id="reading" hidden class="reading">${s[1]}</p><p>${s[2]}</p><p class="muted">Grammar focus: ${s[3]}</p><button onclick="sentIndex++;render()">Next sentence →</button></div>`}
+if(tab=="grammar") app.innerHTML=`${levels()}<div class="grid">${d.grammar.map(g=>`<div class="card"><h2>${g[0]}</h2><b>${g[1]}</b><p class="jp">${g[2]}</p><p>${g[3]}</p></div>`).join("")}</div>`;
+if(tab=="quiz") quiz();
+}
+function quiz(){
+let d=data[level], all=[...d.grammar], i=Math.floor(Math.random()*all.length), q=all[i];
+let opts=[q[1],...all.filter((_,j)=>j!==i).sort(()=>Math.random()-.5).slice(0,3).map(x=>x[1])].sort(()=>Math.random()-.5);
+app.innerHTML=`${levels()}<div class="card"><h2>Grammar Quiz</h2><p class="jp">${q[2]}</p><p>What does <b>${q[0]}</b> mean here?</p>${opts.map(o=>`<button class="quiz-option" onclick="check(this,'${o.replaceAll("'","\\'")}','${q[1].replaceAll("'","\\'")}')">${o}</button>`).join("")}<p id="feedback"></p><button onclick="quiz()">New question</button></div>`;
+}
+function check(btn,got,correct){
+if(got==correct){btn.classList.add("correct");score++;localStorage.jpScore=score;document.getElementById("feedback").textContent="Correct! ✓"}else{btn.classList.add("wrong");document.getElementById("feedback").textContent="Not quite. Try again."}
+}
+render();
+</script>
+</body></html>
